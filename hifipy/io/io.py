@@ -139,6 +139,3 @@ def read_directory(postpath='.', verbose=True):
         "HDF5 files not found. Are you using the correct directory when calling read_directory?"
                 
     return file_list, time
-
-
-
