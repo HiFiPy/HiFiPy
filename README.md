@@ -6,9 +6,15 @@ The following commands will allow access to the grid and the HDF5
 files, and provide the time of each data file.
 
     import hifipy as hfp
-    postpath = "~/HiFi_Runs/20161020a_LaminarBaseRun_LoRes/post_out_4_4"
+    postpath = "/home/spacecat/HiFi_Runs/CaseA/post_out"
     x, y, xx, yy = hfp.read_grid(postpath)
     file_list, time = hfp.read_directory(postpath)
+
+Then x and y will be 2D ndarrays with grid positions, and xx and yy
+will be a 1D ndarray containing the grid positions if the x and y
+positions are not functions of each other.  The time ndarray contains
+the output times for each file, extracted from the xmf files.  The
+file_list contains h5py File objects that allow access to the data.
 
 To see the keys that are contained in each of the HDF5 files, use
 
