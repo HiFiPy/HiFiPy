@@ -24,3 +24,8 @@ The first key will typically be "U01".  To get a slice of the "U01" in
 the third output file, use 
 
     file_list[2]["U01"][:,0]
+
+## Accessing HiFi
+The HiFi website describes how to access the code:
+
+    http://hifi-framework.webnode.com/hifi-framework/
