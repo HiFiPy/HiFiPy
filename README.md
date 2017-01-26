@@ -1,5 +1,12 @@
 # HiFiPy
-Python software for analysis of HiFi simulations
+Python software for analysis of HiFi simulations.  
+
+## Installation
+
+On Linux computers, if will often work to add the top-level directory
+(the one containing the directory `hifipy' in lower case letters) to
+your PYTHONPATH system variable.  Installation instructions on other
+systems is not yet available.
 
 ## Reading in 2D post-processed simulation output files
 The following commands will allow access to the grid and the HDF5
@@ -24,6 +31,19 @@ The first key will typically be "U01".  To get a slice of the "U01" in
 the third output file, use 
 
     file_list[2]["U01"][:,0]
+
+## Compatibility
+This package should work in both Python 2.7 and 3.  
+
+## License
+HiFiPy is licensed under a three-clause BSD-style license contained in
+the LICENSE.md file in the top-level directory.
+
+## Contact information 
+This package was created by Nick Murphy who can often be at
+namurphy@cfa.harvard.edu.  Please contact Nick if you a user of HiFi
+and would like to be given permission to continue development of this
+package.
 
 ## Accessing HiFi
 The HiFi website describes how to access the code:
