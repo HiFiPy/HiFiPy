@@ -14,3 +14,6 @@
 
 # Miscellaneous files
 /build/
+/__pycache__/
+__init__.py~
+/io/__pycache__/
