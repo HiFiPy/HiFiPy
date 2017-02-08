@@ -45,7 +45,23 @@ namurphy@cfa.harvard.edu.  Please contact Nick if you a user of HiFi
 and would like to be given permission to continue development of this
 package.
 
+## Troubleshooting
+
+### IOError on a Mac: `too many files'
+
+On computers running Mac OS 10.10 and later, you may have to change
+the system maximum number of open files to something greater than the
+number of post-processed output files using the following commands:
+
+    sudo launchctl limit maxfiles YOURLIMIT unlimited
+    ulimit -n YOURLIMIT
+
+Prior to OS 10.10, it should be sufficient to run:
+
+    ulimit -n YOURLIMIT`
+
 ## Accessing HiFi
 The HiFi website describes how to access the code:
 
     http://hifi-framework.webnode.com/hifi-framework/
+
