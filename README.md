@@ -37,7 +37,7 @@ the third output file, use
 
     file_list[2]["U01"][:,0]
 
-##Reading in 2D post-processed files as a class
+## Reading in 2D post-processed files as a class
 The following commands will read in the grid and the HDF5 files and 
 produce a class to contain the HiFi variables
 
