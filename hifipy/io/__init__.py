@@ -3,4 +3,5 @@
 from .io import \
     read_directory, \
     read_grid, \
-    find_files_and_time
+    find_files_and_time, \
+    hifi_class

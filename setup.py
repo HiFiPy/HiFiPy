@@ -3,8 +3,8 @@ from os.path import expanduser,isdir, isfile
 from setuptools import setup
 
 
-import h5py
-import numpy as np
+#import h5py
+#import numpy as np
 import glob
 
 setup(name='HiFiPy',
