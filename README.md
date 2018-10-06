@@ -37,6 +37,25 @@ the third output file, use
 
     file_list[2]["U01"][:,0]
 
+##Reading in 2D post-processed files as a class
+The following commands will read in the grid and the HDF5 files and 
+produce a class to contain the HiFi variables
+
+    import hifipy as hfp
+    postpath = "/home/spacecat/HiFi_Runs/CaseA/post_out"
+    data_set = hfp.hifi_class(postpath)
+
+To see grid or HiFi variable information, use
+
+    data_set.x
+ 
+ or
+ 
+    data_set.ni 
+
+All variables are as tracked by HiFi except for velocity, `data_set.vi[x/y/z]` 
+or `data_set.vn[x/y/z]`, which is saved instead of momentum density
+
 ## Compatibility
 This package should work in both Python 2.7 and 3.  
 
