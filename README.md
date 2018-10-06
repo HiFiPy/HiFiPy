@@ -9,6 +9,9 @@ On Linux computers, if will often work to add the top-level directory
 your PYTHONPATH system variable.  Installation instructions on other
 systems is not yet available.
 --->
+Build from source using the command
+
+    python setup.py install
 
 ## Reading in 2D post-processed simulation output files
 The following commands will allow access to the grid and the HDF5
