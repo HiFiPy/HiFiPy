@@ -3,10 +3,15 @@ Python software for analysis of HiFi simulations.
 
 ## Installation
 
+<!---
 On Linux computers, if will often work to add the top-level directory
 (the one containing the directory `hifipy' in lower case letters) to
 your PYTHONPATH system variable.  Installation instructions on other
 systems is not yet available.
+--->
+Build from source using the command
+
+    python setup.py install
 
 ## Reading in 2D post-processed simulation output files
 The following commands will allow access to the grid and the HDF5
@@ -31,6 +36,25 @@ The first key will typically be "U01".  To get a slice of the "U01" in
 the third output file, use 
 
     file_list[2]["U01"][:,0]
+
+## Reading in 2D post-processed files as a class
+The following commands will read in the grid and the HDF5 files and 
+produce a class to contain the HiFi variables
+
+    import hifipy as hfp
+    postpath = "/home/spacecat/HiFi_Runs/CaseA/post_out"
+    data_set = hfp.hifi_class(postpath)
+
+To see grid or HiFi variable information, use
+
+    data_set.x
+ 
+ or
+ 
+    data_set.ni 
+
+All variables are as tracked by HiFi except for velocity, `data_set.vi[x/y/z]` 
+or `data_set.vn[x/y/z]`, which is saved instead of momentum density
 
 ## Compatibility
 This package should work in both Python 2.7 and 3.  
