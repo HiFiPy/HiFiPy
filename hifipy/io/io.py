@@ -192,16 +192,18 @@ class hifi_class:
         except Exception as exc:
             raise IOError(f"Unable to read in simulation results in {postpath}.") from exc
 
-        self._x = xx
-        self._y = yy
-        self._time = time
+        self._data = dict()
 
-        self._file_list = file_list
+        self._data['x'] = xx
+        self._data['y'] = yy
+        self._data['time'] = time
+
+        self._data['file_list'] = file_list
 
         if simID is not None and not isinstance(simID, str):
             raise TypeError("simID must be a string or None.")
 
-        self._name = simID if simID is not None else "no ID"
+        self._data['name'] = simID if simID is not None else "no ID"
 
         U01, U02, U03, U04, U05, U06, U07, U08, U09, U10, U11, U12, U13 =[
             np.empty((len(time),len(yy), len(xx))) for i in range(13)]
@@ -221,84 +223,84 @@ class hifi_class:
             U12[j,:,:] = file_list[j]['U12'][:,:]
             U13[j,:,:] = file_list[j]['U13'][:,:]
 
-        self._ni = U01
-        self._Az = -U02
-        self._Bz = U03
-        self._Vix = np.divide(U04, U01)
-        self._Viy = np.divide(U05, U01)
-        self._Viz = np.divide(U06, U01)
-        self._Jz = U07
-        self._pi = U08
-        self._nn = U09
-        self._Vnx = np.divide(U10, U09)
-        self._Vny = np.divide(U11, U09)
-        self._Vnz = np.divide(U12, U09)
-        self._pn = U13
+        self._data['ni'] = U01
+        self._data['Az'] = -U02
+        self._data['Bz'] = U03
+        self._data['Vix'] = np.divide(U04, U01)
+        self._data['Viy'] = np.divide(U05, U01)
+        self._data['Viz'] = np.divide(U06, U01)
+        self._data['Jz'] = U07
+        self._data['pi'] = U08
+        self._data['nn'] = U09
+        self._data['Vnx'] = np.divide(U10, U09)
+        self._data['Vny'] = np.divide(U11, U09)
+        self._data['Vnz'] = np.divide(U12, U09)
+        self._data['pn'] = U13
 
     @property
     def name(self) -> Optional[str]:
-        return self._name
+        return self._data['name']
 
     @property
     def file_list(self) -> List:
-        return self._file_list
+        return self._data['file_list']
 
     @property
     def x(self) -> np.ndarray:
-        return self._x
+        return self._data['x']
 
     @property
     def y(self) -> np.ndarray:
-        return self._y
+        return self._data['y']
 
     @property
     def time(self) -> np.ndarray:
-        return self.time
+        return self._data['time']
 
     @property
     def ni(self) -> np.ndarray:
-        return self._ni
+        return self._data['ni']
 
     @property
     def Az(self) -> np.ndarray:
-        return self._Az
+        return self._data['Az']
 
     @property
     def Bz(self) -> np.ndarray:
-        return self._Bz
+        return self._data['Bz']
 
     @property
     def Viy(self) -> np.ndarray:
-        return self._Viy
+        return self._data['Viy']
 
     @property
     def Viz(self) -> np.ndarray:
-        return self._Viz
+        return self._data['Viz']
 
     @property
     def Jz(self) -> np.ndarray:
-        return self._Jz
+        return self._data['Jz']
 
     @property
     def pi(self) -> np.ndarray:
-        return self._pi
+        return self._data['pi']
 
     @property
     def nn(self) -> np.ndarray:
-        return self._nn
+        return self._data['nn']
 
     @property
     def Vnx(self) -> np.ndarray:
-        return self._Vnx
+        return self._data['Vnx']
 
     @property
     def Vny(self) -> np.ndarray:
-        return self._Vny
+        return self._data['Vny']
 
     @property
     def Vnz(self) -> np.ndarray:
-        return self._Vnz
+        return self._data['Vnz']
 
     @property
     def pn(self) -> np.ndarray:
-        return self._pn
+        return self._data['pn']
