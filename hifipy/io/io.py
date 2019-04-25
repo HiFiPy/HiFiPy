@@ -11,23 +11,24 @@ Sample Usage
 The following commands will allow access to the grid and the HDF5
 files, and provide the time of each data file.
 
-    import hifipy as hfp
-    postpath = "~/HiFi_Runs/20161020a_LaminarBaseRun_LoRes/post_out_4_4"
-    x, y, xx, yy = hfp.read_grid(postpath)
-    file_list, time = hfp.read_directory(postpath)
+    >>> import hifipy as hfp
+    >>> postpath = "~/HiFi_Runs/20161020a_LaminarBaseRun_LoRes/post_out_4_4"
+    >>> x, y, xx, yy = hfp.read_grid(postpath)
+    >>> file_list, time = hfp.read_directory(postpath)
 
 To see the keys that are contained in each of the HDF5 files, use
 
-    file_list[0].keys()
+    >>> file_list[0].keys()
 
 The first key will typically be "U01".  To get a slice of the "U01" in
 the third output file, use
 
-    file_list[2]["U01"][:,0]
+    >>> file_list[2]["U01"][:,0]
+
 """
 
 from __future__ import print_function
-from os.path import expanduser,isdir, isfile
+from os.path import expanduser, isdir, isfile
 
 import h5py
 import numpy as np
@@ -46,7 +47,8 @@ def read_grid(postpath='.'):
 
     Sample usage
     ------------
-    x, y, xx, yy = hifipy.read_grid('~/HiFi_Runs/20161020a_LaminarBaseRun_LoRes')
+    >>> x, y, xx, yy = hifipy.read_grid('~/HiFi_Runs/20161020a_LaminarBaseRun_LoRes')
+
     """
     assert isdir(expanduser(postpath)), \
         "read_grid: The input must be a directory."
@@ -74,7 +76,7 @@ def find_files_and_time(postpath='.'):
 
     Sample usage
     ------------
-    files_h5, files_xmf, time = find_files_and_time('.')
+    >>> files_h5, files_xmf, time = find_files_and_time('.')
 
     Notes
     -----
@@ -107,18 +109,19 @@ def find_files_and_time(postpath='.'):
 
 def read_directory(postpath='.', verbose=True):
     """
-    Creates a list of h5py File objects that correspond to each
+    Creates a list of ``h5py`` `File` instances that correspond to each
     postprocessed HiFi simulation output file.
 
     Sample usage
     ------------
     To read in a directory, run
 
-        file_list, time = read_directory('.')
+        >>> file_list, time = read_directory('.')
 
     To access data in the fourth output file, use
 
-        file_list[3]["U01"][:,:]
+        >>> file_list[3]["U01"][:,:]
+
     """
 
     assert isdir(expanduser(postpath)), \
@@ -127,7 +130,7 @@ def read_directory(postpath='.', verbose=True):
     files_h5, files_xmf, time = find_files_and_time(postpath)
 
     assert len(files_h5) == len(files_xmf), \
-        "Mismatch in number of HDF5 and xmf files in "+str(postpath)
+        "Mismatch in number of HDF5 and xmf files in " + str(postpath)
 
     file_list = []
     for i in range(0,len(files_h5)):
@@ -143,40 +146,39 @@ def read_directory(postpath='.', verbose=True):
 
 class hifi_class(object):
     """
-    Reads in the list of h5py file objects that correspond to each
+    Reads in the list of ``h5py`` `File` objects that correspond to each
     postprocessed HiFi simulation output file and creates a class
     for all the postprocessed files in a simulation. This object
-    contains all unnormalized HiFi variables and space-time axes
+    contains all unnormalized HiFi variables and space-time axes.
 
     Sample usage
     ------------
-    To create a class from the files in adirectory, run
+    To create a class from the files in a directory, run
 
-        data_set = hifi_class('/path/to/directory', 'simulation ID')
+        >>> data_set = hifi_class('/path/to/directory', 'simulation ID')
 
     To access a given axis or HiFi variable, use any of
 
-        data_set.x
-        data_set.y
-        data_set.time
-
-        data_set.ni
-        data_set.Az
-        data_set.Bz
-        data_set.Vix
-        data_set.Viy
-        data_set.Viz
-        data_set.Jz
-        data_set.pi
-        data_set.nn
-        data_set.Vnx
-        data_set.Vny
-        data_set.Vnz
-        data_set.pn
+        >>> data_set.x
+        >>> data_set.y
+        >>> data_set.time
+        >>> data_set.ni
+        >>> data_set.Az
+        >>> data_set.Bz
+        >>> data_set.Vix
+        >>> data_set.Viy
+        >>> data_set.Viz
+        >>> data_set.Jz
+        >>> data_set.pi
+        >>> data_set.nn
+        >>> data_set.Vnx
+        >>> data_set.Vny
+        >>> data_set.Vnz
+        >>> data_set.pn
 
     To access the simulation ID, use
 
-        data_set.name
+        >>> data_set.name
 
     The default simulation ID is None
     """
