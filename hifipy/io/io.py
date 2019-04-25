@@ -34,8 +34,11 @@ import h5py
 import numpy as np
 import glob
 
+from typing import Optional
 
-def read_grid(postpath='.'):
+
+
+def read_grid(postpath: str = '.'):
     """
     Reads in grid information from a HiFi simulation.
 
@@ -69,7 +72,7 @@ def read_grid(postpath='.'):
     return x_2D, y_2D, x_1D, y_1D
 
 
-def find_files_and_time(postpath='.'):
+def find_files_and_time(postpath: str = '.'):
     """
     Creates a list of the HDF5 and xmf files in a directory, and reads
     in the time from the xmf files into an array.
@@ -107,7 +110,7 @@ def find_files_and_time(postpath='.'):
     return files_h5, files_xmf, time
 
 
-def read_directory(postpath='.', verbose=True):
+def read_directory(postpath: str ='.'):
     """
     Creates a list of ``h5py`` `File` instances that correspond to each
     postprocessed HiFi simulation output file.
@@ -144,7 +147,7 @@ def read_directory(postpath='.', verbose=True):
     return file_list, time
 
 
-class hifi_class(object):
+class hifi_class:
     """
     Reads in the list of ``h5py`` `File` objects that correspond to each
     postprocessed HiFi simulation output file and creates a class
@@ -183,7 +186,7 @@ class hifi_class(object):
     The default simulation ID is None
     """
 
-    def __init__(self, postpath, simID=None):
+    def __init__(self, postpath: str = '.', simID: Optional[str] = None):
         x, y, xx, yy = read_grid(postpath)
         file_list, time = read_directory(postpath)
 
@@ -232,69 +235,69 @@ class hifi_class(object):
         self._pn = U13
 
     @property
-    def name(self):
+    def name(self) -> Optional[str]:
         return self._name
 
     @property
-    def file_list(self):
+    def file_list(self) -> List:
         return self._file_list
 
     @property
-    def x(self):
+    def x(self) -> np.ndarray:
         return self._x
 
     @property
-    def y(self):
+    def y(self) -> np.ndarray:
         return self._y
 
     @property
-    def time(self):
+    def time(self) -> np.ndarray:
         return self.time
 
     @property
-    def ni(self):
+    def ni(self) -> np.ndarray:
         return self._ni
 
     @property
-    def Az(self):
+    def Az(self) -> np.ndarray:
         return self._Az
 
     @property
-    def Bz(self):
+    def Bz(self) -> np.ndarray:
         return self._Bz
 
     @property
-    def Viy(self):
+    def Viy(self) -> np.ndarray:
         return self._Viy
 
     @property
-    def Viz(self):
+    def Viz(self) -> np.ndarray:
         return self._Viz
 
     @property
-    def Jz(self):
+    def Jz(self) -> np.ndarray:
         return self._Jz
 
     @property
-    def pi(self):
+    def pi(self) -> np.ndarray:
         return self._pi
 
     @property
-    def nn(self):
+    def nn(self) -> np.ndarray:
         return self._nn
 
     @property
-    def Vnx(self):
+    def Vnx(self) -> np.ndarray:
         return self._Vnx
 
     @property
-    def Vny(self):
+    def Vny(self) -> np.ndarray:
         return self._Vny
 
     @property
-    def Vnz(self):
+    def Vnz(self) -> np.ndarray:
         return self._Vnz
 
     @property
-    def pn(self):
+    def pn(self) -> np.ndarray:
         return self._pn
