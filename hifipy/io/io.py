@@ -27,13 +27,11 @@ the third output file, use
 
 """
 
-from __future__ import print_function
-from os.path import expanduser, isdir, isfile
-
-import h5py
-import numpy as np
 import glob
+import numpy as np
+import h5py
 
+from os.path import expanduser, isdir, isfile
 from typing import Optional
 
 
@@ -53,13 +51,14 @@ def read_grid(postpath: str = '.'):
     >>> x, y, xx, yy = hifipy.read_grid('~/HiFi_Runs/20161020a_LaminarBaseRun_LoRes')
 
     """
-    assert isdir(expanduser(postpath)), \
-        "read_grid: The input must be a directory."
+
+    if not isdir(expanduser(postpath)):
+        raise IOError("The input to read_grid must be a directory.")
 
     files_grid = glob.glob(postpath+'/grid*.h5')
 
-    assert len(files_grid) > 0, \
-        "read_grid: Grid file not found. Are you using the correct directory when calling read_grid?"
+    if len(files_grid) <= 0:
+        raise IOError("Grid file not found.")
 
     files_grid.sort()
 
@@ -87,8 +86,8 @@ def find_files_and_time(postpath: str = '.'):
     If that format changes, then this routine will have to be
     modified.
     """
-    assert isdir(expanduser(postpath)), \
-        "find_files_and_time: The input must be a directory."
+    if not isdir(expanduser(postpath)):
+        raise IOError("The input to find_files_and_time must be a directory.")
 
     files_h5 = glob.glob(postpath+'/post*.h5')  ; files_h5.sort()
     files_xmf = glob.glob(postpath+'/post*.xmf') ; files_xmf.sort()
@@ -103,9 +102,8 @@ def find_files_and_time(postpath: str = '.'):
             file_xmf = open(files_xmf[i],'r')
             lines = file_xmf.readlines()
             time[i] = np.double(lines[5][18:30])
-    except:
-        print("find_files_and_time: Problem with reading in the time from the .xmf files.")
-        raise
+    except Exception:
+        raise IOError("Unable to read in the time from .xmf files.")
 
     return files_h5, files_xmf, time
 
@@ -127,13 +125,13 @@ def read_directory(postpath: str ='.'):
 
     """
 
-    assert isdir(expanduser(postpath)), \
-        "read_directory: The input must be a directory."
+    if not isdir(expanduser(postpath)):
+        raise IOError("The input to read_directory must be a directory.")
 
     files_h5, files_xmf, time = find_files_and_time(postpath)
 
-    assert len(files_h5) == len(files_xmf), \
-        "Mismatch in number of HDF5 and xmf files in " + str(postpath)
+    if len(files_h5) != len(files_xmf):
+        raise IOError("Mismatch in number of HDF5 and XMF files.")
 
     file_list = []
     for i in range(0,len(files_h5)):
@@ -141,8 +139,8 @@ def read_directory(postpath: str ='.'):
         f = h5py.File(file,'r')
         file_list.append(f)
 
-    assert len(file_list) > 0, \
-        "HDF5 files not found. Are you using the correct directory when calling read_directory?"
+    if len(file_list) < 1:
+        raise IOError(f"No HDF5 files are found in {postpath}.")
 
     return file_list, time
 
@@ -183,24 +181,27 @@ class hifi_class:
 
         >>> data_set.name
 
-    The default simulation ID is None
+    The default simulation ID is None.
     """
 
     def __init__(self, postpath: str = '.', simID: Optional[str] = None):
-        x, y, xx, yy = read_grid(postpath)
-        file_list, time = read_directory(postpath)
 
-        #axes for plotting
+        try:
+            x, y, xx, yy = read_grid(postpath)
+            file_list, time = read_directory(postpath)
+        except Exception as exc:
+            raise IOError(f"Unable to read in simulation results in {postpath}.") from exc
+
         self._x = xx
         self._y = yy
         self._time = time
 
         self._file_list = file_list
 
-        if simID is not None:
-            self._name = simID
-        else:
-            self._name = 'no ID'
+        if simID is not None and not isinstance(simID, str):
+            raise TypeError("simID must be a string or None.")
+
+        self._name = simID if simID is not None else "no ID"
 
         U01, U02, U03, U04, U05, U06, U07, U08, U09, U10, U11, U12, U13 =[
             np.empty((len(time),len(yy), len(xx))) for i in range(13)]
