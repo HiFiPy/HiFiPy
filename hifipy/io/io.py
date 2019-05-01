@@ -32,7 +32,7 @@ import numpy as np
 import h5py
 
 from os.path import expanduser, isdir, isfile
-from typing import Optional
+from typing import Optional, List
 
 
 
