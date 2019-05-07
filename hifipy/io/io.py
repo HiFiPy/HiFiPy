@@ -34,7 +34,6 @@ import h5py
 from os.path import expanduser, isdir, isfile
 from typing import Optional, List
 
-
 def read_grid(postpath: str = '.'):
     """
     Reads in grid information from a HiFi simulation.
@@ -336,4 +335,3 @@ class hifi_class:
     @property
     def By(self) -> np.ndarray:
         raise NotImplementedError
-
