@@ -1,0 +1,146 @@
+&algorithm_input
+
+	solve_type="condense"
+	step_type="theta"
+	theta=0.5
+
+	adapt_dt=t
+	errtol=1.e-5
+	ksp_restart=100
+	always_pc_reset=t
+	ksps_max=250
+
+	itmax=40
+	itmax_incr=2
+	itmax_decr=5
+	dt_incr=1.4142135623730951
+	dt_decr=0.7071067811865476
+
+	nodal=f
+
+	quad_type="gl0"
+	polar=f
+	grid_type="sel"
+	grid_inv_type="jacobi"
+
+	adapt_grid=f
+
+	monitor=t
+	fd_test=f
+	fd_bound_test=f
+	du_diagnose=f
+
+	outfile_type="hdf5"
+	parallel_write=t
+	parallel_read=t
+/
+
+&universal_input
+
+	dtmin=1e-4
+	dmout=10
+	outdir="outdir01"
+	restart_flag=f
+	restart_dir="outdir01"
+	restart_step=1000
+	read_grid=f
+	grid_step=0
+	restart_time=f
+	restart_t0=0.
+/
+
+&pn_asym_list
+
+	nx=36
+	ny=24
+	nbx=12
+	np=6
+	nq=6
+
+	xperiodic=t
+	yperiodic=f
+
+	dt=0.125
+	dtmax=4
+ 	tmax=5000.0
+	nstep=3000
+
+	init_type="VPIC"
+	cylinder=f
+
+	lx=82
+	ly=41
+	lambda_psi=1.0
+
+	equil_flow = 0.0
+
+	L0=0.20435275707111727
+	n0=4.9333333333333e18
+	b0=0.0056568542494923804
+
+	kappa_case="braginskii"
+	kappa_par=0.0
+	eta_case="spitzer-chodura"
+	eta=0.0
+	etavac=1.0
+	cc = 0.0
+	nu = 1.0
+	Dn = 0.0
+	mu = 1.0
+
+	atom="helium"
+
+	di_fac = 1.0
+	ion_fac = 0.0
+	recomb_fac = 0.0
+	cx_fac = 1.0
+	rin_fac = 1.0
+	kapn_fac = 1.0
+	civ_fac = 0.0
+	mfp_fac = 0.0
+
+        asym_BR0 = 0.00316
+        asym_BL0 = 0.00316
+
+        asym_TR0 = 29011.305151
+        asym_TL0 = 29011.305151
+
+	asym_betaR0 = 0.3
+
+	vpic_B = 0.00316
+	vpic_deltaB = 0.025
+	vpic_T = 29011.305151
+	vpic_ni = 1.48e18
+
+	set_equil_ionfrac=f
+	ionfrac_init=0.1
+
+	asym_wallviscratio = 1.0
+
+        asym_drivetype = 'B'
+
+	asym_driveE_delta = 1000.0
+        asym_driveE_tmax =  0.005
+	asym_driveE_dx = 18.0
+	asym_driveE_dy = 8.0 
+
+        asym_driveB_delta = 0.2
+	asym_driveB_dx = 12.0
+	asym_driveB_dy = 2.0
+
+	vpic_densdropfac = 0.0
+	vpic_densdropx = 10.0
+	vpic_densdropy = 1.0
+ 
+        meshtype="symmetric grid curve"
+
+	ygrid_curve2 = 5
+	ygrid_curve4 = 5
+	ygrid_curve6 = 0
+	ygrid_curve8 = 0
+
+	xgrid_curve2 = 1.0
+	xgrid_curve4 = 0
+	xgrid_curve6 = 0
+	xgrid_curve8 = 0
+/
