@@ -330,8 +330,8 @@ class hifi_class:
 
     @property
     def Bx(self) -> np.ndarray:
-        raise NotImplementedError
+        return self._data['Bx']
 
     @property
     def By(self) -> np.ndarray:
-        raise NotImplementedError
+        return self._data['By']
