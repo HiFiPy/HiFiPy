@@ -32,8 +32,7 @@ import numpy as np
 import h5py
 
 from os.path import expanduser, isdir, isfile
-from typing import Optional
-
+from typing import Optional, List
 
 
 def read_grid(postpath: str = '.'):
@@ -184,58 +183,71 @@ class hifi_class:
     The default simulation ID is None.
     """
 
-    def __init__(self, postpath: str = '.', simID: Optional[str] = None):
-
-        try:
-            x, y, xx, yy = read_grid(postpath)
-            file_list, time = read_directory(postpath)
-        except Exception as exc:
-            raise IOError(f"Unable to read in simulation results in {postpath}.") from exc
-
-        self._data = dict()
-
+    def _get_grid(self):
+        x, y, xx, yy = read_grid(self.postpath)
         self._data['x'] = xx
         self._data['y'] = yy
-        self._data['time'] = time
+
+    def _get_file_list_and_time(self):
+        try:
+            file_list, time = read_directory(self.postpath)
+        except Exception as exc:
+            raise IOError(f"Unable to read in HDF5 files in {postpath}") from exc
 
         self._data['file_list'] = file_list
+        self._data['time'] = time
+
+    def _assign_variables_to__data_dict(self):
+        nt, nx, ny = len(self.time), len(self.x), len(self.y)
+
+        U01_through_U13 = [f"U{'0' if n < 10 else ''}{n}" for n in range(1, 14)]
+
+        simulation_results = {
+            variable: np.empty(nt, ny, nx)
+            for variable in U01_through_U13
+        }
+
+        for time_index in range(self.time):
+            for variable in variables:
+                simulation_results[variable][time_index, :, :] = \
+                    self.file_list[time_index][variable][:, :]
+
+        self._data['ni'] = simulation_results['U01']
+        self._data['Az'] = -simulation_results['U02']
+        self._data['Bz'] = simulation_results['U03']
+        self._data['Vix'] = np.divide(simulation_results['U04'], simulation_results['U01'])
+        self._data['Viy'] = np.divide(simulation_results['U05'], simulation_results['U01'])
+        self._data['Viz'] = np.divide(simulation_results['U06'], simulation_results['U01'])
+        self._data['Jz'] = simulation_results['U07']
+        self._data['pp'] = simulation_results['U08']
+        self._data['nn'] = simulation_results['U09']
+        self._data['Vix'] = np.divide(simulation_results['U10'], simulation_results['U01'])
+        self._data['Viy'] = np.divide(simulation_results['U11'], simulation_results['U01'])
+        self._data['Viz'] = np.divide(simulation_results['U12'], simulation_results['U01'])
+        self._data['pn'] = simulation_results('U13')
+
+    def _populate_data_dict(self):
+        self._get_grid()
+        self._get_file_list_and_time()
+        self._assign_variables_to__data_dict()
+
+    def _B_from_Az(self):
+        for time_index in range(len(self.time)):
+            gradient_of_Az = np.gradient(self.Az[0, :, :], self.y, self.x, edge_order=2)
+            self._data['Bx'] = gradient_of_Az[0]
+            self._data['By'] = gradient_of_Az[1]
+
+    def __init__(self, postpath: str = '.', simID: Optional[str] = None):
+
+        self._data = {}
+        self._populate_data_dict()
+        self._B_from_Az()
 
         if simID is not None and not isinstance(simID, str):
             raise TypeError("simID must be a string or None.")
 
         self._data['name'] = simID if simID is not None else "no ID"
-
-        U01, U02, U03, U04, U05, U06, U07, U08, U09, U10, U11, U12, U13 =[
-            np.empty((len(time),len(yy), len(xx))) for i in range(13)]
-
-        for j in range(len(self.time)):
-            U01[j,:,:] = file_list[j]['U01'][:,:]
-            U02[j,:,:] = file_list[j]['U02'][:,:]
-            U03[j,:,:] = file_list[j]['U03'][:,:]
-            U04[j,:,:] = file_list[j]['U04'][:,:]
-            U05[j,:,:] = file_list[j]['U05'][:,:]
-            U06[j,:,:] = file_list[j]['U06'][:,:]
-            U07[j,:,:] = file_list[j]['U07'][:,:]
-            U08[j,:,:] = file_list[j]['U08'][:,:]
-            U09[j,:,:] = file_list[j]['U09'][:,:]
-            U10[j,:,:] = file_list[j]['U10'][:,:]
-            U11[j,:,:] = file_list[j]['U11'][:,:]
-            U12[j,:,:] = file_list[j]['U12'][:,:]
-            U13[j,:,:] = file_list[j]['U13'][:,:]
-
-        self._data['ni'] = U01
-        self._data['Az'] = -U02
-        self._data['Bz'] = U03
-        self._data['Vix'] = np.divide(U04, U01)
-        self._data['Viy'] = np.divide(U05, U01)
-        self._data['Viz'] = np.divide(U06, U01)
-        self._data['Jz'] = U07
-        self._data['pi'] = U08
-        self._data['nn'] = U09
-        self._data['Vnx'] = np.divide(U10, U09)
-        self._data['Vny'] = np.divide(U11, U09)
-        self._data['Vnz'] = np.divide(U12, U09)
-        self._data['pn'] = U13
+        self._data['postpath'] = postpath
 
     @property
     def name(self) -> Optional[str]:
@@ -244,6 +256,18 @@ class hifi_class:
     @property
     def file_list(self) -> List:
         return self._data['file_list']
+
+    @property
+    def postpath(self) -> str:
+        return self._data['postpath']
+
+    @postpath.setter
+    def postpath(self, path_to_postprocessed_files):
+        if not isinstance(path_to_postprocessed_files, str):
+            raise TypeError("Need a string.")
+        if not isdir(expanduser(postpath)):
+            raise ValueError(f"Need a directory.")
+        self._data['postpath'] = postpath
 
     @property
     def x(self) -> np.ndarray:
@@ -282,8 +306,8 @@ class hifi_class:
         return self._data['Jz']
 
     @property
-    def pi(self) -> np.ndarray:
-        return self._data['pi']
+    def pp(self) -> np.ndarray:
+        return self._data['pp']
 
     @property
     def nn(self) -> np.ndarray:
@@ -304,3 +328,12 @@ class hifi_class:
     @property
     def pn(self) -> np.ndarray:
         return self._data['pn']
+
+    @property
+    def Bx(self) -> np.ndarray:
+        raise NotImplementedError
+
+    @property
+    def By(self) -> np.ndarray:
+        raise NotImplementedError
+
