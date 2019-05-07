@@ -225,10 +225,6 @@ class hifi_class:
         self._data['Viz'] = np.divide(simulation_results['U12'], simulation_results['U01'])
         self._data['pn'] = simulation_results('U13')
 
-    def _populate_data_dict(self):
-        self._get_grid()
-        self._get_file_list_and_time()
-        self._assign_variables_to__data_dict()
 
     def _B_from_Az(self):
         for time_index in range(len(self.time)):
@@ -239,18 +235,24 @@ class hifi_class:
     def __init__(self, postpath: str = '.', simID: Optional[str] = None):
 
         self._data = {}
-        self._populate_data_dict()
+        self._get_grid()
+        self._get_file_list_and_time()
+        self._assign_variables_to__data_dict()
         self._B_from_Az()
 
         if simID is not None and not isinstance(simID, str):
             raise TypeError("simID must be a string or None.")
 
-        self._data['name'] = simID if simID is not None else "no ID"
-        self._data['postpath'] = postpath
+        self.name = simID
+        self.postpath = postpath
 
     @property
     def name(self) -> Optional[str]:
         return self._data['name']
+
+    @name.setter
+    def name(self, simID):
+        self._data['name'] = simID if simID is not None else "no ID"
 
     @property
     def file_list(self) -> List:
@@ -261,7 +263,7 @@ class hifi_class:
         return self._data['postpath']
 
     @postpath.setter
-    def postpath(self, path_to_postprocessed_files):
+    def postpath(self, path_to_postprocessed_files: str):
         if not isinstance(path_to_postprocessed_files, str):
             raise TypeError("Need a string.")
         if not isdir(expanduser(postpath)):
