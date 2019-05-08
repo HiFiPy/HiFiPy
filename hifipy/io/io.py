@@ -202,12 +202,14 @@ class hifi_class:
         U01_through_U13 = [f"U{'0' if n < 10 else ''}{n}" for n in range(1, 14)]
 
         simulation_results = {
-            variable: np.empty(nt, ny, nx)
+            variable: np.empty([nt, ny, nx])
             for variable in U01_through_U13
         }
 
-        for time_index in range(self.time):
-            for variable in variables:
+        print(self.file_list)
+
+        for variable in U01_through_U13:
+            for time_index in range(nt):
                 simulation_results[variable][time_index, :, :] = \
                     self.file_list[time_index][variable][:, :]
 
@@ -223,8 +225,7 @@ class hifi_class:
         self._data['Vix'] = np.divide(simulation_results['U10'], simulation_results['U01'])
         self._data['Viy'] = np.divide(simulation_results['U11'], simulation_results['U01'])
         self._data['Viz'] = np.divide(simulation_results['U12'], simulation_results['U01'])
-        self._data['pn'] = simulation_results('U13')
-
+        self._data['pn'] = simulation_results['U13']
 
     def _B_from_Az(self):
         for time_index in range(len(self.time)):
@@ -233,18 +234,17 @@ class hifi_class:
             self._data['By'] = gradient_of_Az[1]
 
     def __init__(self, postpath: str = '.', simID: Optional[str] = None):
+        if simID is not None and not isinstance(simID, str):
+            raise TypeError("simID must be a string or None.")
 
         self._data = {}
+        self.name = simID
+        self.postpath = postpath
+
         self._get_grid()
         self._get_file_list_and_time()
         self._assign_variables_to__data_dict()
         self._B_from_Az()
-
-        if simID is not None and not isinstance(simID, str):
-            raise TypeError("simID must be a string or None.")
-
-        self.name = simID
-        self.postpath = postpath
 
     @property
     def name(self) -> Optional[str]:
@@ -266,9 +266,9 @@ class hifi_class:
     def postpath(self, path_to_postprocessed_files: str):
         if not isinstance(path_to_postprocessed_files, str):
             raise TypeError("Need a string.")
-        if not isdir(expanduser(postpath)):
+        if not isdir(expanduser(path_to_postprocessed_files)):
             raise ValueError(f"Need a directory.")
-        self._data['postpath'] = postpath
+        self._data['postpath'] = path_to_postprocessed_files
 
     @property
     def x(self) -> np.ndarray:
