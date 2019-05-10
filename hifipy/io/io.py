@@ -168,7 +168,7 @@ class hifi_class:
         >>> data_set.Viy
         >>> data_set.Viz
         >>> data_set.Jz
-        >>> data_set.pi
+        >>> data_set.pp
         >>> data_set.nn
         >>> data_set.Vnx
         >>> data_set.Vny
@@ -213,25 +213,30 @@ class hifi_class:
                 simulation_results[variable][time_index, :, :] = \
                     self.file_list[time_index][variable][:, :]
 
-        self._data['ni'] = simulation_results['U01']
-        self._data['Az'] = -simulation_results['U02']
-        self._data['Bz'] = simulation_results['U03']
-        self._data['Vix'] = np.divide(simulation_results['U04'], simulation_results['U01'])
-        self._data['Viy'] = np.divide(simulation_results['U05'], simulation_results['U01'])
-        self._data['Viz'] = np.divide(simulation_results['U06'], simulation_results['U01'])
-        self._data['Jz'] = simulation_results['U07']
-        self._data['pp'] = simulation_results['U08']
-        self._data['nn'] = simulation_results['U09']
-        self._data['Vix'] = np.divide(simulation_results['U10'], simulation_results['U01'])
-        self._data['Viy'] = np.divide(simulation_results['U11'], simulation_results['U01'])
-        self._data['Viz'] = np.divide(simulation_results['U12'], simulation_results['U01'])
-        self._data['pn'] = simulation_results['U13']
+        try:
+            self._data['ni'] = simulation_results['U01']
+            self._data['Az'] = -simulation_results['U02']
+            self._data['Bz'] = simulation_results['U03']
+            self._data['Vix'] = np.divide(simulation_results['U04'], simulation_results['U01'])
+            self._data['Viy'] = np.divide(simulation_results['U05'], simulation_results['U01'])
+            self._data['Viz'] = np.divide(simulation_results['U06'], simulation_results['U01'])
+            self._data['Jz'] = simulation_results['U07']
+            self._data['pp'] = simulation_results['U08']
+            self._data['nn'] = simulation_results['U09']
+            self._data['Vnx'] = np.divide(simulation_results['U10'], simulation_results['U01'])
+            self._data['Vny'] = np.divide(simulation_results['U11'], simulation_results['U01'])
+            self._data['Vnz'] = np.divide(simulation_results['U12'], simulation_results['U01'])
+            self._data['pn'] = simulation_results['U13']
+        except Exception as exc:
+            raise Exception("Unable to create _data private attribute.") from exc
 
     def _B_from_Az(self):
+        self._data['Bx'] = np.empty_like(self.Az)
+        self._data['By'] = np.empty_like(self.Az)
         for time_index in range(len(self.time)):
-            gradient_of_Az = np.gradient(self.Az[0, :, :], self.y, self.x, edge_order=2)
-            self._data['Bx'] = gradient_of_Az[0]
-            self._data['By'] = gradient_of_Az[1]
+            gradient_of_Az = np.gradient(self.Az[time_index, :, :], self.y, self.x, edge_order=2)
+            self._data['Bx'][time_index,:,:] = gradient_of_Az[0]
+            self._data['By'][time_index,:,:] = gradient_of_Az[1]
 
     def __init__(self, postpath: str = '.', simID: Optional[str] = None):
         if simID is not None and not isinstance(simID, str):
@@ -295,6 +300,10 @@ class hifi_class:
         return self._data['Bz']
 
     @property
+    def Vix(self) -> np.ndarray:
+        return self._data['Vix']
+
+    @property
     def Viy(self) -> np.ndarray:
         return self._data['Viy']
 
@@ -337,3 +346,15 @@ class hifi_class:
     @property
     def By(self) -> np.ndarray:
         return self._data['By']
+
+    @property
+    def Nx(self) -> int:
+        return len(self.x)
+
+    @property
+    def Ny(self) -> int:
+        return len(self.y)
+
+    @property
+    def Nt(self) -> int:
+        return len(self.time)
